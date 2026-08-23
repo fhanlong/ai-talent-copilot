@@ -1,0 +1,200 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Job {
+  id          String   @id @default(cuid())
+  title       String
+  department  String?
+  location    String?
+  description String
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  analyses   JobAnalysis[]
+  candidates Candidate[]
+  applications Application[]
+  matches    MatchAnalysis[]
+  interviews InterviewGuide[]
+  interviewSchedules InterviewSchedule[]
+  funnels    FunnelSnapshot[]
+}
+
+model JobAnalysis {
+  id                String   @id @default(cuid())
+  jobId             String
+  jobType           String?
+  competencies      String
+  mustHaveKeywords  String
+  preferredKeywords String
+  interviewFocus    String
+  ambiguities       String
+  modelProvider     String   @default("mock")
+  modelName         String   @default("talent-copilot-demo")
+  promptVersion     String   @default("jd-v1")
+  isConfirmed       Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  job               Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  matches           MatchAnalysis[]
+}
+
+model Candidate {
+  id                String   @id @default(cuid())
+  jobId             String?
+  displayName       String
+  email             String?
+  phone             String?
+  currentRole       String?
+  yearsOfExperience Float?
+  education         String   @default("[]")
+  skills            String   @default("[]")
+  workExperiences   String   @default("[]")
+  resumeText        String?
+  resumeFileName    String?
+  resumeMimeType    String?
+  resumeData        Bytes?
+  sourceFileType    String?
+  source            String?
+  parseStatus       String   @default("COMPLETED")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  job               Job?     @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  applications      Application[]
+  matches           MatchAnalysis[]
+  interviews        InterviewGuide[]
+  interviewSchedules InterviewSchedule[]
+}
+
+model Application {
+  id          String   @id @default(cuid())
+  jobId       String
+  candidateId String
+  stage       String   @default("RECEIVED")
+  status      String   @default("ACTIVE")
+  source      String?
+  notes       String?
+  appliedAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  interviewSchedules InterviewSchedule[]
+
+  @@unique([jobId, candidateId])
+  @@index([jobId, stage])
+  @@index([candidateId])
+}
+
+model MatchAnalysis {
+  id                   String   @id @default(cuid())
+  jobId                String
+  candidateId          String
+  jobAnalysisId        String
+  overallScore         Int
+  competencyScore      Int
+  experienceScore      Int
+  industryScore        Int
+  mustHaveChecks       String
+  strengths            String
+  risks                String
+  missingInformation   String
+  evidence             String
+  interviewSuggestions String
+  confidence           String   @default("MEDIUM")
+  hrDecision           String?
+  hrNotes              String?
+  createdAt            DateTime @default(now())
+  job                   Job         @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidate             Candidate   @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  jobAnalysis           JobAnalysis @relation(fields: [jobAnalysisId], references: [id])
+  interviews            InterviewGuide[]
+}
+
+model InterviewGuide {
+  id              String   @id @default(cuid())
+  jobId           String
+  candidateId     String?
+  matchAnalysisId String?
+  interviewType   String   @default("STRUCTURED")
+  durationMinutes Int      @default(45)
+  questions       String
+  evaluation      String
+  modelProvider   String   @default("mock")
+  modelName       String   @default("talent-copilot-demo")
+  createdAt       DateTime @default(now())
+  job             Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidate       Candidate? @relation(fields: [candidateId], references: [id], onDelete: SetNull)
+  matchAnalysis   MatchAnalysis? @relation(fields: [matchAnalysisId], references: [id], onDelete: SetNull)
+}
+
+model InterviewSchedule {
+  id               String   @id @default(cuid())
+  candidateId      String
+  jobId             String?
+  applicationId     String?
+  title             String
+  startsAt          DateTime
+  endsAt            DateTime
+  timezone          String   @default("Asia/Shanghai")
+  location          String?
+  meetingUrl        String?
+  interviewer       String?
+  notes             String?
+  status            String   @default("SCHEDULED")
+  invitationSentAt  DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  candidate          Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  job                Job? @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  application        Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+
+  @@index([candidateId, startsAt])
+  @@index([jobId, startsAt])
+  @@index([status, startsAt])
+}
+
+model FunnelSnapshot {
+  id             String   @id @default(cuid())
+  jobId          String
+  snapshotDate   DateTime @default(now())
+  received       Int
+  screened       Int
+  interviewed    Int
+  offersMade     Int
+  offersAccepted Int
+  onboarded      Int
+  rates          String
+  aiInsights     String?
+  createdAt      DateTime @default(now())
+  job            Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+model AiAnalysisTask {
+  id            String    @id @default(cuid())
+  taskType      String
+  entityId      String?
+  status        String    @default("PENDING")
+  provider      String
+  model         String
+  promptVersion String
+  inputHash     String?
+  errorMessage  String?
+  tokenUsage    String?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  action     String
+  entityType String
+  entityId   String?
+  metadata   String?
+  createdAt  DateTime @default(now())
+}

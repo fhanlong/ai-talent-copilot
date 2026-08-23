@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --canvas: #f5f7f5;
+  --surface: #ffffff;
+  --border: #e3e8e4;
+  --muted: #67736d;
+  --ink: #172026;
+  --brand: #187653;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--canvas);
+  font-family: Arial, "Microsoft YaHei", "PingFang SC", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, textarea, select { font: inherit; }
+button { cursor: pointer; }
+::selection { background: #c9ebdc; color: #123f31; }
+
+@layer components {
+  .panel { @apply rounded-2xl border border-[#e3e8e4] bg-white shadow-soft; }
+  .btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-secondary { @apply inline-flex items-center justify-center gap-2 rounded-xl border border-[#dce3de] bg-white px-4 py-2.5 text-sm font-semibold text-[#314039] transition hover:border-[#bdcbc3] hover:bg-[#fafcfb]; }
+  .label { @apply mb-2 block text-sm font-semibold text-[#34423b]; }
+  .input { @apply w-full rounded-xl border border-[#dce3de] bg-white px-3.5 py-2.5 text-sm text-ink outline-none transition placeholder:text-[#9aa49f] focus:border-brand-500 focus:ring-4 focus:ring-brand-50; }
+  .eyebrow { @apply text-xs font-bold uppercase tracking-[0.16em] text-brand-600; }
+  .badge { @apply inline-flex items-center rounded-full border border-[#dde6e1] bg-[#f7faf8] px-2.5 py-1 text-xs font-medium text-[#53615a]; }
+}
+
+.fade-up { animation: fade-up .45s ease both; }
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; }
+}
+
+@media print {
+  body { background: white !important; }
+  aside, header, .no-print { display: none !important; }
+  main, main > div { max-width: none !important; padding: 0 !important; margin: 0 !important; }
+  .report-page { padding: 12mm !important; }
+  .panel { box-shadow: none !important; break-inside: avoid; }
+  @page { size: A4; margin: 10mm; }
+}
