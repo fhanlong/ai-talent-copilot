@@ -1,0 +1,12 @@
+node_modules
+.next
+.env
+.env.local
+*.log
+tsconfig.tsbuildinfo
+prisma/*.db
+prisma/*.db-*
+prisma/*.db.bak
+prisma/*.sqlite
+prisma/*.sqlite3
+.DS_Store

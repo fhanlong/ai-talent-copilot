@@ -1,0 +1,8 @@
+node_modules
+.next
+.env
+outputs
+work
+prisma/dev.db
+*.log
+tsconfig.tsbuildinfo
