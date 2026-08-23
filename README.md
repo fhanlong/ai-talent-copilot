@@ -26,9 +26,23 @@ AI Talent Copilot 是一个面向企业 HR 和招聘顾问的 AI 招聘辅助决
 
 ## 功能截图
 
-![AI Talent Copilot 招聘概览](./public/screenshots/dashboard-overview.png)
+### 招聘概览
 
-首页将进行中职位、候选人数、待面试安排与AI建议放在同一个工作台中，适合面试演示时快速讲清完整招聘流程。
+![AI Talent Copilot 最新版招聘概览](./public/screenshots/dashboard-overview-v060.png)
+
+概览中的职位、候选人、AI 匹配和待面试数量均由实际业务数据动态计算，招聘漏斗也会随候选人阶段变化实时更新。
+
+### 候选人查重、隐私保护与面试排期
+
+![AI Talent Copilot 候选人查重合并与面试排期](./public/screenshots/candidate-dedup-scheduling-v060.png)
+
+系统通过手机号或邮箱识别重复人才档案，支持合并记录；联系方式默认遮罩并记录查看审计，同时可直接维护招聘阶段、安排面试、生成邮件邀请和下载日历文件。
+
+### 面试协同工作台
+
+![AI Talent Copilot 面试助手与排期](./public/screenshots/interview-scheduling-v060.png)
+
+面试助手集中展示近期排期、候选人和对应职位，并提供邮件与日历入口，帮助小型团队完成轻量协同。以上截图均使用虚构演示数据。
 
 ## 产品原则
 
